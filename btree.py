@@ -19,6 +19,9 @@
 
 import sys
 
+
+leaf_visited = 0
+
 class IndexedTuple(object):
     """ The basic information to store for each tuple, 
     the key values and the page address.
@@ -75,11 +78,19 @@ class LeafNode(object):
             if flag == True:
                 found.append ( (self.tuples[i].val(), self.tuples[i].loc()) )
             flag = False
-        cur_data = self
+        cur_data = self.sibling 
+        node_found = []
+        global leaf_visited 
+        leaf_visited = 1
         if isWildcard(key) == True:
+            while cur_data <> None:
+                #print "checking wildcard\n"
+                if cur_data.stop_search(key)  == True:
+                    return found
+                leaf_visited = leaf_visited + 1;
+                node_found = cur_data.search_key_full_eq2(key)
+                found = found + node_found
                 cur_data = cur_data.sibling 
-                print "checking wildcard\n"
-                found = found + cur_data.search_key_full_eq2(key)
         return found
     def __str__ (self) :
         tuple_str = ""
@@ -100,7 +111,18 @@ class LeafNode(object):
                 found.append ( (self.tuples[i].val(), self.tuples[i].loc()) )
             flag = False
         return found
-
+    def stop_search (self, key) :
+        for i in xrange( len(self.tuples) ):
+            for indx in range(4):
+                if cmp(key[indx],"*") == 0:
+                    return False
+                elif cmp(self.tuples[i].val()[indx],key[indx])==0:
+                    continue 
+                elif cmp(self.tuples[i].val()[indx],key[indx]) >0:
+                    return True
+                else:
+                    return False
+        return False
 
 class InternalNode(object):
     """ Each internal node stores a list of keys and a list of pointers.
@@ -173,12 +195,15 @@ def search ( root, key ):
     print "Searching i1 for equality (%s,%s,%s,%s)"\
         %(key[0], key[1], key[2], key[3])
     cur_node = root
-    nodes_visited = 1
+    nodes_visited = 0
+    global leaf_visited 
+    leaf_visited = 0
     while not cur_node.isleaf():
         cur_node = cur_node.search_key_full_eq( key )
         nodes_visited += 1
     found = cur_node.search_key_full_eq( key )
-
+    print "   visited %d leaf nodes\n" %leaf_visited 
+    nodes_visited = nodes_visited + leaf_visited
     print "Total nodes visited:", nodes_visited
     pages = set()
     if len(found) == 0:
@@ -270,6 +295,6 @@ if __name__ == "__main__":
     
     for line in open(cmd_file):
         m = line.strip("\n").split("\t")
-
+        print "line %s" %str(m)
         search(root, m)
 
