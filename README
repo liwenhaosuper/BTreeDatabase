@@ -1,0 +1,26 @@
+
+This directory contains 5 files:
+
+README
+	This document.
+
+btree.py
+	The Btree code. It hard codes the data file name 
+	and takes as input the a set of commands separated by TAB.
+	It searches each one using equality search, i.e. assuming
+	all of [a,b,c,d] are filled in with real values.
+
+	Note: a function to print all the contents of an index is given
+	but not practical for the full data set. You can use testdata.txt
+	to print and test code.
+
+scores_byname.txt
+	The input file to index. Scores of contestants. Someone
+	matched the names to give you full names. 
+
+scores_inputsample.txt
+	A sample input file to search. Use this for testing your code.
+
+testdata.txt
+	A small test data file. You can print this data to see if your
+	code is actually working.
