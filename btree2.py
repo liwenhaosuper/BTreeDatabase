@@ -77,17 +77,11 @@ class LeafNode(object):
             flag = False
         cur_data = self
         if isWildcard(key) == True:
-                cur_data = cur_data.sibling 
-                print "checking wildcard\n"
-                found = found + cur_data.search_key_full_eq2(key)
+            cur_data = cur_data.sibling
+            #found.append(cur_data.search_key_full_eq2(key))
         return found
-    def __str__ (self) :
-        tuple_str = ""
-        for tuple in self.tuples:
-            tuple_str += "(%s) " %(str(tuple))
-        return tuple_str
     def search_key_full_eq2 (self,key) : 
-        found = [] 
+        found = []
         flag = False
         for i in xrange( len(self.tuples) ):
             for indx in range(4):
@@ -100,6 +94,11 @@ class LeafNode(object):
                 found.append ( (self.tuples[i].val(), self.tuples[i].loc()) )
             flag = False
         return found
+    def __str__ (self) :
+        tuple_str = ""
+        for tuple in self.tuples:
+            tuple_str += "(%s) " %(str(tuple))
+        return tuple_str
 
 
 class InternalNode(object):
@@ -206,10 +205,13 @@ def print_tree( root, level ):
             print str(t), 
         print ""
 
+
 def isWildcard( data ):
+   """ check whether a tuple contains wildcard  """
     if data[0] == "*" or data[1] == "*" or data[2] == "*" or data[3] == "*" :
         return True
     return False
+
 
 if __name__ == "__main__":
     NODECAP = 60  ## the max capacity of the nodes
